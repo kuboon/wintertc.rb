@@ -130,6 +130,10 @@ module WinterTc
         end
 
         location = net_response["location"]
+        unless location
+          raise RedirectError,
+                "Redirect response (#{net_response.code}) is missing a Location header"
+        end
         new_url  = resolve_url(location, original_request.url)
 
         # 301/302/303 → change to GET; 307/308 → preserve original method.
