@@ -1,0 +1,6 @@
+# frozen_string_literal: true
+
+module WinterTc
+  # The current version of the wintertc gem.
+  VERSION = "0.1.0"
+end

@@ -1,0 +1,110 @@
+module WinterTc
+  VERSION: String
+  MAX_REDIRECTS: Integer
+
+  # ---------------------------------------------------------------------------
+  # Error classes
+  # ---------------------------------------------------------------------------
+
+  class Error < StandardError
+  end
+
+  class TooManyRedirectsError < Error
+  end
+
+  class RedirectError < Error
+  end
+
+  class UnsupportedMethodError < Error
+  end
+
+  # ---------------------------------------------------------------------------
+  # Headers
+  # ---------------------------------------------------------------------------
+
+  # A case-insensitive map of HTTP header fields, mirroring the JavaScript
+  # Headers interface.
+  class Headers
+    include Enumerable[[String, String]]
+
+    def initialize: (?Hash[String, String] | Array[[String, String]] | Headers | nil) -> void
+    def get: (String name) -> String?
+    def set: (String name, String value) -> nil
+    def has: (String name) -> bool
+    def delete: (String name) -> nil
+    def append: (String name, String value) -> nil
+    def each: () { ([String, String]) -> void } -> self
+    def keys: () -> Array[String]
+    def values: () -> Array[String]
+    def to_h: () -> Hash[String, String]
+    def inspect: () -> String
+  end
+
+  # ---------------------------------------------------------------------------
+  # Request
+  # ---------------------------------------------------------------------------
+
+  # An immutable description of an HTTP request.
+  class Request
+    attr_reader url: String
+    attr_reader method: String
+    attr_reader headers: Headers
+    attr_reader body: String?
+
+    def initialize: (
+      String | Request input,
+      ?method: String?,
+      ?headers: Hash[String, String] | Headers | nil,
+      ?body: String?
+    ) -> void
+
+    def inspect: () -> String
+  end
+
+  # ---------------------------------------------------------------------------
+  # Response
+  # ---------------------------------------------------------------------------
+
+  # The server's HTTP response.
+  class Response
+    STATUS_TEXTS: Hash[Integer, String]
+
+    attr_reader status: Integer
+    attr_reader headers: Headers
+    attr_reader url: String?
+
+    def self.json: (
+      untyped data,
+      ?status: Integer,
+      ?headers: Hash[String, String] | Headers | nil
+    ) -> Response
+
+    def initialize: (
+      status: Integer,
+      headers: Hash[String, String] | Headers,
+      body: String?,
+      ?url: String?
+    ) -> void
+
+    def ok: () -> bool
+    def ok?: () -> bool
+    def text: () -> String
+    def json: () -> untyped
+    def status_text: () -> String
+    def inspect: () -> String
+  end
+
+  # ---------------------------------------------------------------------------
+  # fetch
+  # ---------------------------------------------------------------------------
+
+  # Performs an HTTP request and returns the response.  Synchronous.
+  def self.fetch: (
+    String | Request input,
+    ?method: String?,
+    ?headers: Hash[String, String] | Headers | nil,
+    ?body: String?,
+    ?redirect: :follow | :manual | :error,
+    **untyped
+  ) -> Response
+end

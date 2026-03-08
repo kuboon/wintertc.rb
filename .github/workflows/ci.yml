@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  test:
+    name: "Ruby ${{ matrix.ruby }}"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby:
+          - "3.3"
+          - "3.4"
+          - head   # tracks the latest Ruby development branch (≈ 4.0-dev)
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Ruby ${{ matrix.ruby }}
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true   # runs `bundle install` and caches gems
+
+      - name: Run tests
+        run: bundle exec rake test
