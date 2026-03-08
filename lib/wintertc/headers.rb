@@ -92,9 +92,14 @@ module WinterTc
     #
     # @yieldparam name  [String]
     # @yieldparam value [String]
-    # @return [self]
-    def each(&block)
-      @data.each(&block)
+    # @return [Enumerator] if no block is given
+    # @return [self]       otherwise
+    def each
+      return to_enum(:each) unless block_given?
+
+      @data.each do |name, value|
+        yield name, value
+      end
       self
     end
 

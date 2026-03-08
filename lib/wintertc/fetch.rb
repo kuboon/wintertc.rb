@@ -141,7 +141,9 @@ module WinterTc
                      when 307, 308 then original_request.method
                      else "GET"
                      end
-        new_request = Request.new(new_url, method: new_method)
+        request_kwargs = { method: new_method, headers: original_request.headers }
+        request_kwargs[:body] = original_request.body if new_method == original_request.method && original_request.body
+        new_request = Request.new(new_url, **request_kwargs)
         perform(new_request, redirect: :follow, hops: hops + 1)
 
       when :error
