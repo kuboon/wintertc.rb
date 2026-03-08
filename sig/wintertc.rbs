@@ -73,6 +73,12 @@ module WinterTc
     attr_reader headers: Headers
     attr_reader url: String?
 
+    def self.json: (
+      untyped data,
+      ?status: Integer,
+      ?headers: Hash[String, String] | Headers | nil
+    ) -> Response
+
     def initialize: (
       status: Integer,
       headers: Hash[String, String] | Headers,

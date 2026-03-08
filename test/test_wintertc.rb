@@ -293,6 +293,32 @@ class TestResponse < Minitest::Test
     assert_includes res.inspect, "WinterTc::Response"
     assert_includes res.inspect, "404"
   end
+
+  def test_json_static_creates_json_response
+    res = WinterTc::Response.json({ key: "value" })
+    assert_equal 200,               res.status
+    assert_equal "application/json", res.headers.get("content-type")
+    assert_equal({ "key" => "value" }, res.json)
+  end
+
+  def test_json_static_with_custom_status
+    res = WinterTc::Response.json({ error: "not found" }, status: 404)
+    assert_equal 404, res.status
+    assert_equal({ "error" => "not found" }, res.json)
+  end
+
+  def test_json_static_with_extra_headers
+    res = WinterTc::Response.json([1, 2, 3], headers: { "X-Custom" => "yes" })
+    assert_equal "yes",              res.headers.get("x-custom")
+    assert_equal "application/json", res.headers.get("content-type")
+  end
+
+  def test_json_static_content_type_overrides_caller_header
+    # Content-Type should always be application/json regardless of what the
+    # caller passes in headers.
+    res = WinterTc::Response.json("hello", headers: { "Content-Type" => "text/plain" })
+    assert_equal "application/json", res.headers.get("content-type")
+  end
 end
 
 # ===========================================================================

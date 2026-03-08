@@ -68,6 +68,29 @@ module WinterTc
     # @return [String, nil]
     attr_reader :url
 
+    # Creates a {Response} whose body is the JSON serialisation of +data+ and
+    # whose +Content-Type+ header is set to +application/json+.  This mirrors
+    # the JavaScript
+    # {https://developer.mozilla.org/en-US/docs/Web/API/Response/json_static
+    # Response.json()} static method.
+    #
+    # @param data   [Object]  any JSON-serialisable value (Hash, Array, String, …)
+    # @param status [Integer] HTTP status code (default: +200+)
+    # @param headers [Hash, Headers, nil] additional response headers
+    # @return [Response]
+    #
+    # @example
+    #   res = WinterTc::Response.json({ message: "hello" })
+    #   res.status                          #=> 200
+    #   res.headers.get("content-type")     #=> "application/json"
+    #   res.json                            #=> { "message" => "hello" }
+    def self.json(data, status: 200, headers: nil)
+      body = JSON.generate(data)
+      merged = Headers.new(headers)
+      merged.set("Content-Type", "application/json")
+      new(status: status, headers: merged, body: body)
+    end
+
     # Creates a new Response.
     #
     # @param status  [Integer]            HTTP status code
