@@ -1,0 +1,11 @@
+name: release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    uses: kuboon/workflows/.github/workflows/gem-release.yml@main
+    
