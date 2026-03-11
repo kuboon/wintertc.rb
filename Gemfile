@@ -3,3 +3,8 @@
 source "https://rubygems.org"
 
 gemspec
+
+group :development, :test do
+	gem "minitest", "> 6"
+	gem "rake", "~> 13"
+end
